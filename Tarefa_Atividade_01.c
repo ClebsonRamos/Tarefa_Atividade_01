@@ -1,14 +1,15 @@
+//-----BIBLIOTECAS NECESSÁRIAS-----
 #include <stdio.h>
 #include "pico/stdlib.h"
 #include "hardware/timer.h"
 
+//-----CONSTANTES PARA OS PINOS DO RASPBERRI PI PICO W-----
 #define LED_VERMELHO 13
 #define LED_AMARELO 12 // Azul no BitDogLab
 #define LED_VERDE 11
 
 //-----VARIÁVEIS GLOBAIS-----
-char status_do_semaforo[3] = {'R', 'Y', 'G'};
-int marcador_status_semaforo = 0;
+uint marcador_status_semaforo = 0;
 
 //-----PROTÓTIPOS-----
 void inicializacao_dos_pinos(void);
@@ -20,18 +21,18 @@ bool repeating_timer_callback(struct repeating_timer *ponteiro){
     if(marcador_status_semaforo == 3)
         marcador_status_semaforo = 0;
     // Estrutura responsável pelo acionamento dos LEDs.
-    switch(status_do_semaforo[marcador_status_semaforo]){
-        case 'R': // Sinal vermelho
+    switch(marcador_status_semaforo){
+        case 0: // Sinal vermelho
             gpio_put(LED_VERMELHO, true);
             gpio_put(LED_AMARELO, false);
             gpio_put(LED_VERDE, false);
             break;
-        case 'B': // Sinal amarelo (azul no BitDogLab)
+        case 1: // Sinal amarelo (azul no BitDogLab)
             gpio_put(LED_VERMELHO, false);
             gpio_put(LED_AMARELO, true);
             gpio_put(LED_VERDE, false);
             break;
-        case 'G': // Sinal verde
+        case 2: // Sinal verde
             gpio_put(LED_VERMELHO, false);
             gpio_put(LED_AMARELO, false);
             gpio_put(LED_VERDE, true);
@@ -55,12 +56,16 @@ int main(void){
     gpio_put(LED_VERMELHO, true);
 
     while(true){
-        if(status_do_semaforo[marcador_status_semaforo] == 'R'){
-            printf("SINAL VERMELHO - Aguarde.\n");
-        }else if(status_do_semaforo[marcador_status_semaforo] == 'Y'){
-            printf("SINAL AMARELO - Atencao.\n");
-        }else if(status_do_semaforo[marcador_status_semaforo] == 'G'){
-            printf("SINAL VERDE - Prossiga.\n");
+        switch(marcador_status_semaforo){
+            case 0:
+                printf("SINAL VERMELHO - Aguarde.\n");
+                break;
+            case 1:
+                printf("SINAL AMARELO - Atencao.\n");
+                break;
+            case 2:
+                printf("SINAL VERDE - Prossiga.\n");
+                break;
         }
         sleep_ms(1000);
     }

@@ -8,7 +8,7 @@
 
 //-----VARIÁVEIS GLOBAIS-----
 char status_do_semaforo[3] = {'R', 'B', 'G'};
-int marcador_status_semaforo = 0;
+int marcador_status_semaforo = 1;
 
 //-----PROTÓTIPOS-----
 void inicializacao_dos_pinos(void);

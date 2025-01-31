@@ -3,18 +3,23 @@
 #include "hardware/timer.h"
 
 #define LED_VERMELHO 13
-#define LED_AZUL 11
-#define LED_VERDE 12
+#define LED_AZUL 12
+#define LED_VERDE 11
 
 //-----VARIÁVEIS GLOBAIS-----
 char status_do_semaforo[3] = {'R', 'B', 'G'};
-int marcador_status_semaforo = 1;
+int marcador_status_semaforo = 0;
 
 //-----PROTÓTIPOS-----
 void inicializacao_dos_pinos(void);
 
 //-----FUNÇÃO CALLBACK-----
 bool repeating_timer_callback(struct repeating_timer *ponteiro){
+    // Incremento do marcador do estado do semáforo.
+    marcador_status_semaforo++;
+    if(marcador_status_semaforo == 3)
+        marcador_status_semaforo = 0;
+    // Estrutura responsável pelo acionamento dos LEDs.
     switch(status_do_semaforo[marcador_status_semaforo]){
         case 'R': // Sinal vermelho
             gpio_put(LED_VERMELHO, true);
@@ -32,9 +37,6 @@ bool repeating_timer_callback(struct repeating_timer *ponteiro){
             gpio_put(LED_VERDE, true);
             break;
     }
-    marcador_status_semaforo++;
-    if(marcador_status_semaforo == 3)
-        marcador_status_semaforo = 0;
     return true;
 }
 
@@ -53,11 +55,11 @@ int main(void){
     gpio_put(LED_VERMELHO, true);
 
     while(true){
-        if(status_do_semaforo[marcador_status_semaforo] == 'r'){
+        if(status_do_semaforo[marcador_status_semaforo] == 'R'){
             printf("SINAL VERMELHO - Aguarde.\n");
-        }else if(status_do_semaforo[marcador_status_semaforo] == 'b'){
+        }else if(status_do_semaforo[marcador_status_semaforo] == 'B'){
             printf("SINAL AMARELO - Atencao.\n");
-        }else if(status_do_semaforo[marcador_status_semaforo] == 'g'){
+        }else if(status_do_semaforo[marcador_status_semaforo] == 'G'){
             printf("SINAL VERDE - Prossiga.\n");
         }
         sleep_ms(1000);
